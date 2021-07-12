@@ -16,6 +16,17 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#include <sstream>
+#include <string>   // std::string
+#include <iostream> // std::cout
+//#include <ESPFlash.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <cstdlib>
+#include <ESP8266WebServer.h>
+#include <ESP8266HTTPUpdateServer.h>
+#include <ESP8266WiFi.h>
+
 #include <Arduino.h>
 
 extern "C"{
@@ -30,7 +41,7 @@ extern "C"{
 //Then define the frequency
 long freq = 25000;
 //Work out pwm period
-double per = 1/freq;
+double per = 1.0/freq;
 double divider = 0.0000002;
 const uint32_t period = per/divider;
 
@@ -39,7 +50,7 @@ const uint32_t period = per/divider;
 uint32 io_info[PWM_CHANNELS][3] = {
    // MUX,          FUNC,     PIN
 // {PERIPHS_IO_MUX_GPIO5_U, FUNC_GPIO5,   5}, // D1
- {PERIPHS_IO_MUX_GPIO4_U, FUNC_GPIO4,   4}, // D2
+   {PERIPHS_IO_MUX_GPIO4_U, FUNC_GPIO4,   4}, // D2
    {PERIPHS_IO_MUX_GPIO0_U, FUNC_GPIO0,   0}, // D3
    {PERIPHS_IO_MUX_GPIO2_U, FUNC_GPIO2 ,  2},//D4
    {PERIPHS_IO_MUX_MTMS_U,  FUNC_GPIO14, 14},//D5
@@ -53,10 +64,20 @@ uint32 io_info[PWM_CHANNELS][3] = {
 uint32 pwm_duty_init[PWM_CHANNELS] = {0, 0, 0, 0, 0, 0};
 //END DEFINE PWM
 
+//Start Webserver and update server
+#define OTAUSER "admin"     // Set OTA user
+#define OTAPASSWORD "admin" // Set OTA password
+#define OTAPATH "/update"   // Set path for update
+#define SERVERPORT 80       // Server port
+ESP8266WebServer myServer(SERVERPORT);
+ESP8266HTTPUpdateServer httpUpdater;
+
+const char *ssid = "Info";
+const char *password = "a1b2c3d4e5";
 
 //test
-double supposedOutput = 0;
-uint8_t currentDutyperc = 10;
+//double supposedOutput = 0;
+//uint8_t currentDutyperc = 10;
 
 
 void setup() {
@@ -85,6 +106,21 @@ pwm_start();
 }
 void loop() {
   // put your main code here, to run repeatedly:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*
   for(int i = 0; i<5;i++)
   {
@@ -106,7 +142,7 @@ void loop() {
     currentDutyperc = 10;
   }
   delay(500);
-  */
+*/
 }
 void pwmpercentSetDuty(uint8_t input, uint8_t channel)
 {

@@ -1,6 +1,6 @@
-    /*
+/*
     Basic control for 6 PWM channels at 25 KHz and some LED effects for 3.
-    Copyright (C) <year>  <name of author>
+    Copyright (C) 2021  Nssassassin
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

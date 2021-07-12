@@ -15,7 +15,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-
+#include <avr/pgmspace.h>
+#include "index.h"
 #include <sstream>
 #include <string>   // std::string
 #include <iostream> // std::cout
@@ -26,14 +27,14 @@
 #include <ESP8266WebServer.h>
 #include <ESP8266HTTPUpdateServer.h>
 #include <ESP8266WiFi.h>
-
+#include <FastLED.h>
+//#include <WebServer.h>
 #include <Arduino.h>
 
 extern "C"{
   #include "pwm.h"
   #include "user_interface.h"
 }
-
 //DEFINE FOR PWM
 //The setup function is called once at startup of the sketch
 //For this to work you need to define the amount of PWM channels
@@ -64,33 +65,93 @@ uint32 io_info[PWM_CHANNELS][3] = {
 uint32 pwm_duty_init[PWM_CHANNELS] = {0, 0, 0, 0, 0, 0};
 //END DEFINE PWM
 
+
+//LOCAL VARIABLES
+uint8_t currentDuty[PWM_CHANNELS] = {0, 15, 30, 45, 60, 75};
+
 //Start Webserver and update server
 #define OTAUSER "admin"     // Set OTA user
 #define OTAPASSWORD "admin" // Set OTA password
 #define OTAPATH "/update"   // Set path for update
 #define SERVERPORT 80       // Server port
-ESP8266WebServer myServer(SERVERPORT);
+//ESP8266WebServer myServer(SERVERPORT);
 ESP8266HTTPUpdateServer httpUpdater;
-
-const char *ssid = "Info";
+ESP8266WebServer server(SERVERPORT);
+const char *ssid = "PWM control";
 const char *password = "a1b2c3d4e5";
 
 //test
 //double supposedOutput = 0;
 //uint8_t currentDutyperc = 10;
+void handleRoot() {
+ String s = MAIN_page; //Read HTML contents
+ server.send(200, "text/html", s); //Send web page
+}
 
+void sendPWMvalues1()
+{
+  //int a = analogRead(A0);
+  String pwmVal = String(currentDuty[0]);
+  //String PWM = String(a);
+  server.send(200, "text/plane", pwmVal); //Send ADC value only to client ajax request
+  Serial.println("Sent: " + pwmVal );
+}
+void sendPWMvalues2()
+{
+  //int a = analogRead(A0);
+  String pwmVal = String(currentDuty[1]);
+  //String PWM = String(a);
+  server.send(200, "text/plane", pwmVal); //Send ADC value only to client ajax request
+  Serial.println("Sent: " + pwmVal );
+}
+void sendPWMvalues3()
+{
+  //int a = analogRead(A0);
+  String pwmVal = String(currentDuty[2]);
+  //String PWM = String(a);
+  server.send(200, "text/plane", pwmVal); //Send ADC value only to client ajax request
+  Serial.println("Sent: " + pwmVal );
+}
+void sendPWMvalues4()
+{
+  //int a = analogRead(A0);
+  String pwmVal = String(currentDuty[3]);
+  //String PWM = String(a);
+  server.send(200, "text/plane", pwmVal); //Send ADC value only to client ajax request
+  Serial.println("Sent: " + pwmVal );
+}
+void sendPWMvalues5()
+{
+  //int a = analogRead(A0);
+  String pwmVal = String(currentDuty[4]);
+  //String PWM = String(a);
+  server.send(200, "text/plane", pwmVal); //Send ADC value only to client ajax request
+  Serial.println("Sent: " + pwmVal );
+}
+void sendPWMvalues6()
+{
+  //int a = analogRead(A0);
+  String pwmVal = String(currentDuty[5]);
+  //String PWM = String(a);
+  server.send(200, "text/plane", pwmVal); //Send ADC value only to client ajax request
+  Serial.println("Sent: " + pwmVal );
+}
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
+  Serial.println();
+  Serial.println("Booting Sketch...");
 // Set pins (Important! All Pins must be initialized, the PWM SDK cannot work without this
+  Serial.println("Set PWM Pin OUTPUT");
   pinMode(D2, OUTPUT);
   pinMode(D3, OUTPUT);
   pinMode(D4, OUTPUT);
   pinMode(D5, OUTPUT);
   pinMode(D6, OUTPUT);
   pinMode(D7, OUTPUT);
- // pinMode(D8, OUTPUT);
+  Serial.println("Set PWM Pin LOW");
+  // pinMode(D8, OUTPUT);
   //pinMode(10, OUTPUT);
   digitalWrite(D2, LOW);
   digitalWrite(D3, LOW);
@@ -98,24 +159,45 @@ void setup() {
   digitalWrite(D5, LOW);
   digitalWrite(D6, LOW);
   digitalWrite(D7, LOW);
- // digitalWrite(D8, LOW);
+  // digitalWrite(D8, LOW);
   //digitalWrite(10, LOW);
-  
-pwm_init(period, pwm_duty_init, PWM_CHANNELS, io_info);
-pwm_start();
+  // FastLED
+  Serial.println("Set PWM Pin LOW and start PWM");
+  pwm_init(period, pwm_duty_init, PWM_CHANNELS, io_info);
+  pwm_start();
+  Serial.println("START WIFI AP");
+  WiFi.mode(WIFI_AP); //Access Point mode
+  WiFi.softAP(ssid, password);
+  IPAddress myIP = WiFi.softAPIP();
+  Serial.print("AP IP address: ");
+  Serial.println(myIP);
+
+  Serial.print("Start server");
+  server.on("/", handleRoot);      //This is display page
+  server.on("/getPWM1", sendPWMvalues1);//To get update of PWM Value only
+  server.on("/getPWM2", sendPWMvalues2);//To get update of PWM Value only
+  server.on("/getPWM3", sendPWMvalues3);//To get update of PWM Value only
+  server.on("/getPWM4", sendPWMvalues4);//To get update of PWM Value only
+  server.on("/getPWM5", sendPWMvalues5);//To get update of PWM Value only
+  server.on("/getPWM6", sendPWMvalues6);//To get update of PWM Value only
+
+  httpUpdater.setup(&server, OTAPATH, OTAUSER, OTAPASSWORD);
+
+
+
+  server.begin();                  //Start server
 }
 void loop() {
   // put your main code here, to run repeatedly:
+server.handleClient();
+EVERY_N_MILLISECONDS(3000){
 
-
-
-
-
-
-
-
-
-
+  for(int i = 0; i<6;i++)
+  {
+    pwmpercentSetDuty(currentDuty[i],i);
+  }
+  delay(1);
+}
 
 
 

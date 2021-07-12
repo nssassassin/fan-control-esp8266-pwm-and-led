@@ -28,14 +28,14 @@ extern "C"{
 //For this to work you need to define the amount of PWM channels
 #define PWM_CHANNELS 6
 //Then define the frequency
-
-//long freq = 25000;
-//double per = 1/freq;
-//double divider = 0.0000002;
-//const uint32_t period =per/divider;
+long freq = 25000;
+//Work out pwm period
+double per = 1/freq;
+double divider = 0.0000002;
+const uint32_t period = per/divider;
 
 //Deprecated
-const uint32_t period = 200; // * 200ns ^= 25 kHz 0.00004 seconds  
+//const uint32_t period = 200; // * 200ns ^= 25 kHz 0.00004 seconds  
 uint32 io_info[PWM_CHANNELS][3] = {
    // MUX,          FUNC,     PIN
 // {PERIPHS_IO_MUX_GPIO5_U, FUNC_GPIO5,   5}, // D1

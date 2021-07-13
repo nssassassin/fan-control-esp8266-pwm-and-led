@@ -68,6 +68,10 @@ uint32 pwm_duty_init[PWM_CHANNELS] = {0, 0, 0, 0, 0, 0};
 
 //LOCAL VARIABLES
 uint8_t currentDuty[PWM_CHANNELS] = {0, 15, 30, 45, 60, 75};
+String manualControl = "OFF";
+bool manualPWM = false;
+
+//END LOCAL VARIABLES
 
 //Start Webserver and update server
 #define OTAUSER "admin"     // Set OTA user
@@ -86,6 +90,31 @@ const char *password = "a1b2c3d4e5";
 void handleRoot() {
  String s = MAIN_page; //Read HTML contents
  server.send(200, "text/html", s); //Send web page
+}
+
+void handlePWMAuto() {
+ String t_state = server.arg("manualControl"); //Refer  xhttp.open("GET", "setLED?LEDstate="+led, true);
+ Serial.println(t_state);
+ if(t_state == "1")
+ {
+  //digitalWrite(LED,LOW); //LED ON
+  manualControl = "ON"; //Feedback parameter
+  manualPWM = true;
+  Serial.println("tstate was '1'");
+ }
+ else
+ {
+   Serial.println("tstate was not 1");
+   Serial.print("it was actually ");
+   Serial.print(t_state);
+     //digitalWrite(LED,HIGH); //LED OFF
+  manualControl = "OFF"; //Feedback parameter  
+  manualPWM = false;
+
+ }
+ 
+ server.send(200, "text/plane", manualControl); //Send web page
+  
 }
 
 void sendPWMvalues1()
@@ -180,6 +209,8 @@ void setup() {
   server.on("/getPWM4", sendPWMvalues4);//To get update of PWM Value only
   server.on("/getPWM5", sendPWMvalues5);//To get update of PWM Value only
   server.on("/getPWM6", sendPWMvalues6);//To get update of PWM Value only
+  server.on("/setPWMAuto", handlePWMAuto);
+
 
   httpUpdater.setup(&server, OTAPATH, OTAUSER, OTAPASSWORD);
 

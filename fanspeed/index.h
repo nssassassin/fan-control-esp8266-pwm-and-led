@@ -118,25 +118,33 @@ input:checked + .slider:before {
   </div>
   <div class="column">
     <div class="card">
+
        <h1>PWM AUTO</h1><br>
+       	<button type="button" onclick="sendData(1)">PWM ON</button>         
+      	<button type="button" onclick="sendData(0)">PWM OFF</button>
+        <br>
+        <h2>PWM State is : <span id="PWMstate">NA</span></h2>
        <!-- Rounded switch -->
-        <label class="switch">
-         <input type="checkbox" id="pwmVAL" onclick="sendData(this)">
-         <span class="slider round"> </span>
-        </label>
+        <!-- <label class="switch">-->
+         <!--<input type="checkbox" id="pwmVAL" onclick="sendData(this)">-->
+        <!-- <span class="slider round"> </span>-->
+       <!--  </label>-->
     </div>
   </div>
 </div>
 <script>
 
 
-function sendData(cb) {
+function sendData(value) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
-    
-    xhttp.open("GET", "setPWMAuto" , true);
-    xhttp.send();
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("PWMstate").innerHTML =
+      this.responseText;
+    }
   };
+  xhttp.open("GET", "setPWMAuto?manualControl="+value, true);
+  xhttp.send();
   
 }
 

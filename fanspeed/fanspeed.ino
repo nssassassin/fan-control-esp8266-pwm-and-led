@@ -106,7 +106,7 @@ void handlePWMAuto() {
  {
    Serial.println("tstate was not 1");
    Serial.print("it was actually ");
-   Serial.print(t_state);
+   Serial.println(t_state);
      //digitalWrite(LED,HIGH); //LED OFF
   manualControl = "OFF"; //Feedback parameter  
   manualPWM = false;

@@ -80,7 +80,7 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
-</s
+
 </style>
 <body>
 <div class="row">
@@ -121,7 +121,7 @@ input:checked + .slider:before {
        <h1>PWM AUTO</h1><br>
        <!-- Rounded switch -->
         <label class="switch">
-         <input type="checkbox" id="pwmVAL" onclick="sendData()>
+         <input type="checkbox" id="pwmVAL" onclick="sendData(this)">
          <span class="slider round"> </span>
         </label>
     </div>
@@ -130,14 +130,12 @@ input:checked + .slider:before {
 <script>
 
 
-function sendData() {
+function sendData(cb) {
   var xhttp = new XMLHttpRequest();
-  var pwmstate = document.getElementById("pwmVAL");
   xhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      xhttp.open("GET", "setPWMAuto?manualControl=" + pwmstate, true);
-      xhttp.send();
-    }
+    
+    xhttp.open("GET", "setPWMAuto" , true);
+    xhttp.send();
   };
   
 }
@@ -147,9 +145,9 @@ function sendData() {
 
 
 setInterval(function() {
-  // Call a function repetatively with 1 Second interval
+  // Call a function repetatively with 5 Second interval
   getData();
-}, 1000); //1000mSeconds update rate
+}, 5000); //5000mSeconds update rate
 
 function getData() {
   
